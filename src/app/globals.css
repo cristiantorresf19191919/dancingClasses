@@ -5,6 +5,30 @@
 :root {
   --background: #0a0a0f;
   --foreground: #f0f0f5;
+  --surface: rgba(255, 255, 255, 0.03);
+  --surface-border: rgba(255, 255, 255, 0.08);
+  --glow-pink: rgba(255, 45, 123, 0.4);
+  --glow-purple: rgba(184, 41, 221, 0.3);
+  --glow-blue: rgba(0, 212, 255, 0.2);
+}
+
+/* Smooth scrolling — navigation principle */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Respect user preference for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 body {
@@ -12,32 +36,36 @@ body {
   background: var(--background);
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar — subtle, not distracting */
 ::-webkit-scrollbar {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #1a1a2e;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #ff2d7b;
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 3px;
 }
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 45, 123, 0.4);
+}
 
-/* Calendar overrides for dark neon theme */
+/* Calendar base theme */
 .rdp {
   --rdp-cell-size: 44px;
   --rdp-accent-color: #ff2d7b;
   --rdp-background-color: rgba(255, 45, 123, 0.15);
 }
 
-.rdp-day_selected:not(.rdp-day_disabled) {
-  background-color: #ff2d7b !important;
-  color: white !important;
+/* Outside days (prev/next month) — force faint on the button */
+.booking-outside button {
+  color: rgba(255, 255, 255, 0.06) !important;
+  pointer-events: none;
 }
-
-.rdp-day:hover:not(.rdp-day_disabled):not(.rdp-day_selected) {
-  background-color: rgba(255, 45, 123, 0.2) !important;
+.booking-outside button:hover {
+  background: transparent !important;
+  box-shadow: none !important;
 }
 
 /* Neon glow effect for buttons */
@@ -61,7 +89,33 @@ body {
 
 /* Glass morphism */
 .glass {
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--surface);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--surface-border);
+}
+
+/* Card style (Puzzle-inspired elevated cards) */
+.card-elevated {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.card-elevated:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+/* Subtle concentric circles background */
+.bg-concentric {
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(184, 41, 221, 0.12), transparent),
+    radial-gradient(ellipse 60% 40% at 80% 50%, rgba(255, 45, 123, 0.08), transparent),
+    radial-gradient(ellipse 50% 30% at 20% 80%, rgba(0, 212, 255, 0.06), transparent);
+}
+
+/* Headline soft glow */
+.text-glow {
+  text-shadow: 0 0 40px var(--glow-pink), 0 0 80px var(--glow-purple);
 }

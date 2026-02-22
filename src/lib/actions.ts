@@ -5,7 +5,11 @@ import {
   getDocs,
   setDoc,
   updateDoc,
+  deleteDoc,
   arrayRemove,
+  arrayUnion,
+  query,
+  orderBy,
   Timestamp,
 } from "firebase/firestore";
 import { db } from "./firebase";
@@ -19,9 +23,26 @@ export interface Booking {
   id?: string;
   name: string;
   email: string;
+  phone: string;
+  modality: string;
+  danceStyle: string;
+  salsaSubStyle?: string;
+  level: string;
   date: string;
   time: string;
   createdAt: Timestamp;
+}
+
+export interface CreateBookingParams {
+  name: string;
+  email: string;
+  phone: string;
+  modality: string;
+  danceStyle: string;
+  salsaSubStyle?: string;
+  level: string;
+  date: string;
+  time: string;
 }
 
 /**
@@ -65,12 +86,11 @@ export async function getTimeSlotsForDate(
  * Create a booking and remove that time slot from the calendar.
  */
 export async function createBooking(
-  name: string,
-  email: string,
-  date: string,
-  time: string
+  params: CreateBookingParams
 ): Promise<{ success: boolean; message: string }> {
   try {
+    const { name, email, phone, modality, danceStyle, salsaSubStyle, level, date, time } = params;
+
     // 1. Check that the time slot is still available
     const calendarRef = doc(db, "calendar", date);
     const calendarSnap = await getDoc(calendarRef);
@@ -89,13 +109,21 @@ export async function createBooking(
 
     // 2. Save the booking
     const bookingRef = doc(collection(db, "bookings"));
-    await setDoc(bookingRef, {
+    const bookingData: Record<string, unknown> = {
       name,
       email,
+      phone,
+      modality,
+      danceStyle,
+      level,
       date,
       time,
       createdAt: Timestamp.now(),
-    });
+    };
+    if (salsaSubStyle) {
+      bookingData.salsaSubStyle = salsaSubStyle;
+    }
+    await setDoc(bookingRef, bookingData);
 
     // 3. Remove the time slot from the calendar
     await updateDoc(calendarRef, {
@@ -113,6 +141,118 @@ export async function createBooking(
       message: "Hubo un error. Por favor intenta de nuevo.",
     };
   }
+}
+
+/**
+ * Fetch all bookings, ordered by date desc.
+ */
+export async function getAllBookings(): Promise<Booking[]> {
+  const q = query(collection(db, "bookings"), orderBy("date", "desc"));
+  const snapshot = await getDocs(q);
+  const bookings: Booking[] = [];
+
+  snapshot.forEach((docSnap) => {
+    const data = docSnap.data();
+    bookings.push({
+      id: docSnap.id,
+      name: data.name || "",
+      email: data.email || "",
+      phone: data.phone || "",
+      modality: data.modality || "",
+      danceStyle: data.danceStyle || "",
+      salsaSubStyle: data.salsaSubStyle,
+      level: data.level || "",
+      date: data.date || "",
+      time: data.time || "",
+      createdAt: data.createdAt,
+    });
+  });
+
+  return bookings;
+}
+
+/**
+ * Cancel a booking: delete the booking doc and restore the time slot.
+ */
+export async function cancelBooking(
+  bookingId: string,
+  date: string,
+  time: string
+): Promise<{ success: boolean; message: string }> {
+  try {
+    await deleteDoc(doc(db, "bookings", bookingId));
+
+    const calendarRef = doc(db, "calendar", date);
+    const calendarSnap = await getDoc(calendarRef);
+    if (calendarSnap.exists()) {
+      await updateDoc(calendarRef, {
+        availableTimes: arrayUnion(time),
+      });
+    } else {
+      await setDoc(calendarRef, { availableTimes: [time] });
+    }
+
+    return { success: true, message: "Reserva cancelada correctamente." };
+  } catch (error) {
+    console.error("Cancel booking error:", error);
+    return { success: false, message: "Error al cancelar la reserva." };
+  }
+}
+
+/**
+ * Add availability: set or merge time slots for a date.
+ */
+export async function addAvailability(
+  date: string,
+  times: string[]
+): Promise<void> {
+  const calendarRef = doc(db, "calendar", date);
+  const calendarSnap = await getDoc(calendarRef);
+
+  if (calendarSnap.exists()) {
+    await updateDoc(calendarRef, {
+      availableTimes: arrayUnion(...times),
+    });
+  } else {
+    await setDoc(calendarRef, { availableTimes: times });
+  }
+}
+
+/**
+ * Remove a single time slot from a date.
+ */
+export async function removeTimeSlot(
+  date: string,
+  time: string
+): Promise<void> {
+  const calendarRef = doc(db, "calendar", date);
+  await updateDoc(calendarRef, {
+    availableTimes: arrayRemove(time),
+  });
+}
+
+/**
+ * Remove an entire date from the calendar.
+ */
+export async function removeDate(date: string): Promise<void> {
+  await deleteDoc(doc(db, "calendar", date));
+}
+
+/**
+ * Fetch all calendar entries.
+ */
+export async function getAllCalendarDays(): Promise<CalendarDay[]> {
+  const snapshot = await getDocs(collection(db, "calendar"));
+  const days: CalendarDay[] = [];
+
+  snapshot.forEach((docSnap) => {
+    days.push({
+      id: docSnap.id,
+      availableTimes: docSnap.data().availableTimes || [],
+    });
+  });
+
+  return days.sort((a, b) => a.id.localeCompare(b.id));
 }
 
 /**
