@@ -1,6 +1,5 @@
 import Image from "next/image";
 import BookingWidget from "@/components/BookingWidget";
-import SeedButton from "@/components/SeedButton";
 import TypingEffect from "@/components/TypingEffect";
 import Nav from "@/components/Nav";
 import {
@@ -15,6 +14,10 @@ import {
   X,
   Instagram,
   Phone,
+  Crown,
+  Gift,
+  Quote,
+  Users,
 } from "lucide-react";
 
 const HERO_SUBTITLE =
@@ -23,6 +26,7 @@ const HERO_SUBTITLE =
 const NAV_LINKS = [
   { label: "Clases", href: "#styles" },
   { label: "Profesora", href: "#teacher" },
+  { label: "Precios", href: "#pricing" },
   { label: "Reservar", href: "#booking" },
 ];
 
@@ -54,6 +58,75 @@ const FEATURE_CARDS = [
     icon: Sparkles,
     accent: "text-neon-purple",
     accentBg: "bg-neon-purple/10",
+  },
+];
+
+const PRICING_PLANS = [
+  {
+    name: "Clase Suelta",
+    price: "35.000",
+    period: "por clase",
+    description: "Perfecta para probar sin compromiso",
+    features: [
+      "1 clase de 1 hora",
+      "Elige Salsa o Bachata",
+      "Grupal o privada",
+    ],
+    accent: "neon-blue",
+    popular: false,
+  },
+  {
+    name: "Pack Ritmo",
+    price: "120.000",
+    period: "4 clases",
+    description: "El favorito de nuestros alumnos",
+    features: [
+      "4 clases de 1 hora",
+      "Ahorra un 15%",
+      "Mezcla estilos libremente",
+      "Valido por 30 dias",
+    ],
+    accent: "neon-pink",
+    popular: true,
+  },
+  {
+    name: "Plan Fuego",
+    price: "200.000",
+    period: "8 clases",
+    description: "Para los que van en serio",
+    features: [
+      "8 clases de 1 hora",
+      "Ahorra un 30%",
+      "Acceso a todos los estilos",
+      "Valido por 60 dias",
+      "Clase de prueba gratis para un amigo",
+    ],
+    accent: "neon-purple",
+    popular: false,
+  },
+];
+
+const TESTIMONIALS = [
+  {
+    name: "Camila R.",
+    text: "Llegue sin saber ni mover las caderas y en 2 meses ya estaba bailando salsa en fiestas. Stefi tiene una paciencia increible y hace que todo se sienta facil.",
+    style: "Salsa Casino",
+    rating: 5,
+    classes: 16,
+  },
+  {
+    name: "Andres M.",
+    text: "Mi novia me trajo a rastras y ahora soy yo el que reserva cada semana. La bachata se volvio nuestra cosa de pareja favorita.",
+    style: "Bachata",
+    rating: 5,
+    classes: 24,
+  },
+  {
+    name: "Valentina P.",
+    text: "Probe muchas academias antes y ninguna se compara. El sistema de reservas es super facil y Stefi se adapta a tu nivel sin hacerte sentir mal.",
+    style: "Salsa En linea",
+    rating: 5,
+    classes: 12,
   },
 ];
 
@@ -322,6 +395,142 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ═══════ Testimonials Section ═══════ */}
+      <section className="relative z-10 px-4 md:px-6 pb-20 max-w-6xl mx-auto">
+        <div className="text-center mb-10">
+          <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
+            Lo que dicen nuestros alumnos
+          </h2>
+          <p className="text-white/35 text-sm">
+            Historias reales de personas que conquistaron la pista
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {TESTIMONIALS.map((t) => (
+            <div
+              key={t.name}
+              className="card-elevated rounded-2xl p-6 flex flex-col gap-4"
+            >
+              <Quote className="h-6 w-6 text-neon-pink/30" />
+              <p className="text-white/60 text-sm leading-relaxed flex-1">
+                &ldquo;{t.text}&rdquo;
+              </p>
+              <div className="flex items-center gap-1 mt-1">
+                {Array.from({ length: t.rating }).map((_, i) => (
+                  <Star
+                    key={i}
+                    className="h-3.5 w-3.5 text-neon-yellow fill-neon-yellow"
+                  />
+                ))}
+              </div>
+              <div className="flex items-center justify-between pt-3 border-t border-white/[0.06]">
+                <div>
+                  <p className="text-white font-semibold text-sm">{t.name}</p>
+                  <p className="text-white/25 text-xs mt-0.5">{t.style}</p>
+                </div>
+                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/[0.04] border border-white/[0.06]">
+                  <Users className="h-3 w-3 text-neon-pink/50" />
+                  <span className="text-white/30 text-xs font-medium">
+                    {t.classes} clases
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ═══════ Pricing Section ═══════ */}
+      <section
+        id="pricing"
+        className="relative z-10 px-4 md:px-6 pb-20 max-w-5xl mx-auto scroll-mt-24"
+      >
+        <div className="text-center mb-10">
+          <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
+            Planes y precios
+          </h2>
+          <p className="text-white/35 text-sm">
+            Invierte en ti. Elige el plan que mejor se adapte a tu ritmo.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {PRICING_PLANS.map((plan) => (
+            <div
+              key={plan.name}
+              className={`relative rounded-2xl p-6 flex flex-col gap-4 transition-all duration-200 ${
+                plan.popular
+                  ? `bg-white/[0.06] border-2 border-${plan.accent}/30 shadow-[0_0_30px_rgba(255,45,123,0.08)]`
+                  : "bg-white/[0.02] border border-white/[0.06] hover:border-white/[0.1]"
+              }`}
+            >
+              {plan.popular && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-neon-pink text-white text-xs font-bold shadow-lg shadow-neon-pink/25">
+                  <Crown className="h-3 w-3" />
+                  Mas popular
+                </div>
+              )}
+              <div className="pt-1">
+                <h3 className="text-white font-semibold text-lg">{plan.name}</h3>
+                <p className="text-white/25 text-xs mt-1">{plan.description}</p>
+              </div>
+              <div className="flex items-baseline gap-1">
+                <span className="text-3xl font-bold text-white">
+                  ${plan.price}
+                </span>
+                <span className="text-white/25 text-sm">COP</span>
+              </div>
+              <p className="text-white/30 text-xs -mt-2">{plan.period}</p>
+              <div className="h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+              <ul className="space-y-2.5 flex-1">
+                {plan.features.map((f) => (
+                  <li key={f} className="flex items-start gap-2.5">
+                    <Check
+                      className={`h-4 w-4 text-${plan.accent} flex-shrink-0 mt-0.5`}
+                    />
+                    <span className="text-white/50 text-sm">{f}</span>
+                  </li>
+                ))}
+              </ul>
+              <a
+                href="#booking"
+                className={`mt-2 inline-flex items-center justify-center h-11 rounded-xl font-semibold text-sm transition-all duration-200 ${
+                  plan.popular
+                    ? "bg-neon-pink text-white neon-glow hover:bg-neon-pink/90"
+                    : "bg-white/[0.04] border border-white/[0.08] text-white/60 hover:text-white hover:border-white/[0.15]"
+                }`}
+              >
+                {plan.popular ? "Elegir Plan Ritmo" : `Elegir ${plan.name}`}
+              </a>
+            </div>
+          ))}
+        </div>
+
+        {/* Free trial callout */}
+        <div className="mt-6 rounded-2xl bg-white/[0.02] border border-dashed border-neon-pink/15 p-5 flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
+          <div className="w-10 h-10 rounded-xl bg-neon-pink/10 border border-neon-pink/20 flex items-center justify-center flex-shrink-0">
+            <Gift className="h-5 w-5 text-neon-pink" />
+          </div>
+          <div className="flex-1">
+            <p className="text-white font-semibold text-sm">
+              Primera clase de prueba gratis
+            </p>
+            <p className="text-white/30 text-xs mt-0.5">
+              Ven, prueba y si te enamoras del baile, elige tu plan. Sin
+              compromiso.
+            </p>
+          </div>
+          <a
+            href="#booking"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-neon-pink/10 border border-neon-pink/20 text-neon-pink text-sm font-semibold hover:bg-neon-pink/15 transition-colors flex-shrink-0"
+          >
+            Probar gratis
+            <ArrowDown className="h-4 w-4" />
+          </a>
+        </div>
+      </section>
+
       {/* ═══════ Booking Section ═══════ */}
       <section
         id="booking"
@@ -381,14 +590,18 @@ export default function Home() {
                 </h4>
                 <div className="space-y-2.5">
                   <a
-                    href="#"
+                    href="https://instagram.com/soulbalance.dance"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="flex items-center gap-2 text-white/35 hover:text-white text-sm transition-colors duration-200"
                   >
                     <Instagram className="h-4 w-4" />
                     Instagram
                   </a>
                   <a
-                    href="#"
+                    href="https://wa.me/573001234567?text=Hola!%20Quiero%20info%20sobre%20clases%20de%20baile"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="flex items-center gap-2 text-white/35 hover:text-white text-sm transition-colors duration-200"
                   >
                     <Phone className="h-4 w-4" />
@@ -412,8 +625,6 @@ export default function Home() {
         </div>
       </footer>
 
-      {/* Dev seed button */}
-      <SeedButton />
     </main>
   );
 }

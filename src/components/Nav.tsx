@@ -6,6 +6,7 @@ import { Music, X, Menu } from "lucide-react";
 const NAV_LINKS = [
   { label: "Clases", href: "#styles" },
   { label: "Profesora", href: "#teacher" },
+  { label: "Precios", href: "#pricing" },
   { label: "Reservar", href: "#booking" },
 ];
 

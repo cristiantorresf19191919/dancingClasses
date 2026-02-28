@@ -229,7 +229,7 @@ export default function BookingWidget() {
               </div>
             </div>
             <p className="text-white/40 text-sm font-medium tracking-wide">
-              Cargando disponibilidad...
+              Afinando los ritmos...
             </p>
           </div>
         </div>
@@ -261,7 +261,7 @@ export default function BookingWidget() {
                 <Sparkles className="h-5 w-5 text-neon-yellow absolute -top-1 -right-1 animate-pulse" />
               </div>
               <h3 className="text-3xl font-bold text-white mb-3">
-                Reserva Confirmada!
+                Tu pista esta reservada!
               </h3>
               <div className="inline-flex items-center justify-center flex-wrap gap-2 sm:gap-3 px-4 sm:px-5 py-3 rounded-2xl bg-white/[0.03] border border-white/[0.06] mb-3">
                 <div className="flex items-center gap-2">
@@ -294,7 +294,7 @@ export default function BookingWidget() {
                 <span className="text-white/40 text-xs">{modality}</span>
               </div>
               <p className="text-white/25 text-sm mb-10">
-                Nos vemos en la pista de baile
+                Preparate para brillar en la pista
               </p>
               <Button
                 variant="outline"
@@ -491,7 +491,7 @@ export default function BookingWidget() {
                         <div className="flex flex-col items-center gap-3 py-10">
                           <Loader2 className="h-6 w-6 animate-spin text-neon-pink/50" />
                           <p className="text-white/20 text-xs">
-                            Cargando horarios...
+                            Buscando horarios disponibles...
                           </p>
                         </div>
                       ) : timeSlots.length === 0 ? (
@@ -502,25 +502,33 @@ export default function BookingWidget() {
                           </p>
                         </div>
                       ) : (
-                        <div className="grid grid-cols-2 gap-2.5">
-                          {timeSlots.map((time) => (
-                            <button
-                              key={time}
-                              onClick={() => handleTimeSelect(time)}
-                              className="group/slot relative px-4 py-3.5 rounded-xl border border-white/[0.06] bg-white/[0.02] hover:border-neon-pink/25 hover:bg-neon-pink/[0.06] transition-all duration-200 text-left"
-                            >
-                              <div className="flex items-center gap-2.5">
-                                <Clock className="h-3.5 w-3.5 text-white/20 group-hover/slot:text-neon-pink/60 transition-colors" />
-                                <span className="text-white/70 group-hover/slot:text-white font-semibold text-sm transition-colors">
-                                  {formatTimeDisplay(time)}
-                                </span>
-                              </div>
-                              <p className="text-white/15 group-hover/slot:text-white/30 text-[0.65rem] mt-1.5 ml-6 transition-colors">
-                                Salsa & Bachata
-                              </p>
-                            </button>
-                          ))}
-                        </div>
+                        <>
+                          <div className="flex items-center gap-2 mb-3 px-1">
+                            <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                            <span className="text-white/30 text-xs font-medium">
+                              {timeSlots.length} {timeSlots.length === 1 ? "horario disponible" : "horarios disponibles"}
+                            </span>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2.5">
+                            {timeSlots.map((time) => (
+                              <button
+                                key={time}
+                                onClick={() => handleTimeSelect(time)}
+                                className="group/slot relative px-4 py-3.5 rounded-xl border border-white/[0.06] bg-white/[0.02] hover:border-neon-pink/25 hover:bg-neon-pink/[0.06] transition-all duration-200 text-left"
+                              >
+                                <div className="flex items-center gap-2.5">
+                                  <Clock className="h-3.5 w-3.5 text-white/20 group-hover/slot:text-neon-pink/60 transition-colors" />
+                                  <span className="text-white/70 group-hover/slot:text-white font-semibold text-sm transition-colors">
+                                    {formatTimeDisplay(time)}
+                                  </span>
+                                </div>
+                                <p className="text-white/15 group-hover/slot:text-white/30 text-[0.65rem] mt-1.5 ml-6 transition-colors">
+                                  Salsa & Bachata
+                                </p>
+                              </button>
+                            ))}
+                          </div>
+                        </>
                       )}
                     </div>
                   )}
